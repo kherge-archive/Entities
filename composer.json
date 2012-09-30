@@ -1,0 +1,38 @@
+{
+    "type": "library",
+    "name": "kherge/entities",
+    "description": "A Silex service provider for Doctrine ORM.",
+    "homepage": "http://github.com/kherge/Entities",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kevin Herrera",
+            "email": "kevin@herrera.io"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.3",
+        "doctrine/orm": ">2.2,<2.4-dev"
+    },
+    
+    "require-dev": {
+        "silex/silex": "@dev"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "KevinGH\\Entities": "src/lib/"
+        }
+    },
+
+    "config": {
+        "vendor-dir": "src/vendors"
+    },
+
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
