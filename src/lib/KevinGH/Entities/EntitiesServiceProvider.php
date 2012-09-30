@@ -46,16 +46,16 @@ class EntitiesServiceProvider implements ServiceProviderInterface
 
         foreach ($app['ems.options'] as $name => $options) {
             $cache[$name] = $cache->share(
-                function () use ($cache, $options) {
+                function () use ($app, $cache, $options) {
                     $class = 'Doctrine\Common\Cache\\' . $options['caching_driver'];
 
                     switch ($options['caching_driver']) {
                         case 'ApcCache':
                         case 'ArrayCache':
                         case 'XcacheCache':
-                            return new $class;
+                            return new $class();
                         case 'MemcacheCache':
-                            $cache = new $class;
+                            $cache = new $class();
 
                             if ((false === isset($app['memcache']))
                                     && (false === isset($options['memcache']))) {
@@ -72,7 +72,7 @@ class EntitiesServiceProvider implements ServiceProviderInterface
 
                             return $cache;
                         case 'MemcachedCache':
-                            $cache = new $class;
+                            $cache = new $class();
 
                             if ((false === isset($app['memcached']))
                                     && (false === isset($options['memcached']))) {
