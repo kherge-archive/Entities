@@ -49,47 +49,84 @@ class EntitiesServiceProviderTest extends InternalTestCase
     {
         $this->provider->register($this->app);
 
-        $this->app['memcache'] = new Memcache;
-        $this->app['memcached'] = new Memcached;
-        $this->app['ems.options'] = array(
-            'apc' => array(
-                'caching_driver' => 'ApcCache',
-                'proxy_dir' => '',
-                'proxy_namespace' => '',
-                'mapping_paths' => ''
-            ),
+        $options = array(
             'array' => array(
                 'caching_driver' => 'ArrayCache',
                 'proxy_dir' => '',
                 'proxy_namespace' => '',
                 'mapping_paths' => ''
-            ),
-            'memcache' => array(
+            )
+        );
+
+        if (extension_loaded('apc')) {
+            $options['apc'] = array(
+                'caching_driver' => 'ApcCache',
+                'proxy_dir' => '',
+                'proxy_namespace' => '',
+                'mapping_paths' => ''
+            );
+        }
+
+        if (extension_loaded('memcache')) {
+            $this->app['memcache'] = new Memcache();
+            $options['memcache'] = array(
                 'caching_driver' => 'MemcacheCache',
                 'proxy_dir' => '',
                 'proxy_namespace' => '',
-                'mapping_paths' => '',
-                'memcache' => new Memcache
-            ),
-            'memcached' => array(
+                'mapping_paths' => ''
+            );
+        }
+
+        if (extension_loaded('memcached')) {
+            $this->app['memcached'] = new Memcached();
+            $options['memcached'] = array(
                 'caching_driver' => 'MemcachedCache',
                 'proxy_dir' => '',
                 'proxy_namespace' => '',
-                'mapping_paths' => '',
-                'memcached' => new Memcached
-            )
-        );
+                'mapping_paths' => ''
+            );
+        }
+
+        $this->app['ems.options'] = $options;
 
         $cache = $this->provider->createCache($this->app);
 
         $this->assertInstanceOf('Pimple', $cache);
-        $this->assertInstanceOf('Doctrine\Common\Cache\ApcCache', $cache['apc']);
-        $this->assertInstanceOf('Doctrine\Common\Cache\ArrayCache', $cache['array']);
-        $this->assertInstanceOf('Doctrine\Common\Cache\MemcacheCache', $cache['memcache']);
-        $this->assertInstanceOf('Doctrine\Common\Cache\MemcachedCache', $cache['memcached']);
+        $this->assertInstanceOf(
+            'Doctrine\Common\Cache\ArrayCache',
+            $cache['array']
+        );
 
-        $this->assertSame($this->app['ems.options']['memcache']['memcache'], $cache['memcache']->getMemcache());
-        $this->assertSame($this->app['ems.options']['memcached']['memcached'], $cache['memcached']->getMemcached());
+        if (extension_loaded('apc')) {
+            $this->assertInstanceOf(
+                'Doctrine\Common\Cache\ApcCache',
+                $cache['apc']
+            );
+        }
+
+        if (extension_loaded('memcache')) {
+            $this->assertInstanceOf(
+                'Doctrine\Common\Cache\MemcacheCache',
+                $cache['memcache']
+            );
+
+            $this->assertSame(
+                $this->app['memcache'],
+                $cache['memcache']->getMemcache()
+            );
+        }
+
+        if (extension_loaded('memcached')) {
+            $this->assertInstanceOf(
+                'Doctrine\Common\Cache\MemcachedCache',
+                $cache['memcached']
+            );
+
+            $this->assertSame(
+                $this->app['memcached'],
+                $cache['memcached']->getMemcached()
+            );
+        }
     }
 
     /**
@@ -162,15 +199,12 @@ class EntitiesServiceProviderTest extends InternalTestCase
     {
         $this->provider->register($this->app);
 
-        $this->app['memcache'] = new Memcache;
-        $this->app['memcached'] = new Memcached;
         $this->app['ems.options'] = array(
             'annotation' => array(
                 'proxy_dir' => '',
                 'proxy_namespace' => '',
                 'mapping_driver' => 'AnnotationDriver',
-                'mapping_paths' => '/path/annotation',
-                'memcache' => new Memcache
+                'mapping_paths' => '/path/annotation'
             ),
             'xml' => array(
                 'proxy_dir' => '',
@@ -207,8 +241,7 @@ class EntitiesServiceProviderTest extends InternalTestCase
         $this->app['em.options'] = array(
             'proxy_dir' => '',
             'proxy_namespace' => '',
-            'mapping_driver' => 'BadDriver',
-            'memcache' => new Memcache
+            'mapping_driver' => 'BadDriver'
         );
 
         $mapping = $this->app['ems.mapping'];
@@ -229,8 +262,7 @@ class EntitiesServiceProviderTest extends InternalTestCase
                 'proxy_dir' => '',
                 'proxy_namespace' => '',
                 'mapping_driver' => 'AnnotationDriver',
-                'mapping_paths' => '',
-                'memcache' => new Memcache
+                'mapping_paths' => ''
             ),
             'two' => array(
                 'caching_driver' => 'ArrayCache',
@@ -277,8 +309,7 @@ class EntitiesServiceProviderTest extends InternalTestCase
                 'proxy_dir' => sys_get_temp_dir(),
                 'proxy_namespace' => 'test',
                 'mapping_driver' => 'AnnotationDriver',
-                'mapping_paths' => '',
-                'memcache' => new Memcache
+                'mapping_paths' => ''
             ),
             'two' => array(
                 'caching_driver' => 'ArrayCache',
