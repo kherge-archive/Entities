@@ -24,7 +24,7 @@ use Silex\SilexEvents;
 /**
  * Doctrine ORM provider.
  *
- * @author Kevin Herrera <kherrera@ebscohost.com>
+ * @author Kevin Herrera <kevin@herrera.io>
  */
 class EntitiesServiceProvider implements ServiceProviderInterface
 {
