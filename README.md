@@ -1,5 +1,7 @@
 # Entities
 
+> This library is no longer maintained. I recommend using [dflydev/doctrine-orm-service-provider](https://github.com/dflydev/dflydev-doctrine-orm-service-provider) instead.
+
 [![Build Status](https://secure.travis-ci.org/kherge/Entities.png?branch=master)](http://travis-ci.org/kherge/Entities)
 
 Entities is a Silex service provider for Doctrine ORM.
